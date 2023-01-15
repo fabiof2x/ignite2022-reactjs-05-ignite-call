@@ -7,14 +7,17 @@ import {
   Text,
   TextInput,
 } from '@ignite-ui/react'
+import { useRouter } from 'next/router'
 import { ArrowRight } from 'phosphor-react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { api } from '../../../lib/axios'
 import { convertTimeStringToMinutes } from '../../../utils/convert-time-string-to-minutes'
 import { getWeekDays } from '../../../utils/get-week-days'
-import { Container, FormError, Header } from '../styles'
+import { Container, Header } from '../styles'
+
 import {
+  FormError,
   IntervalBox,
   IntervalDay,
   IntervalInputs,
@@ -85,6 +88,8 @@ export default function TimeIntervals() {
     },
   })
 
+  const router = useRouter()
+
   const weekDays = getWeekDays()
 
   const { fields } = useFieldArray({
@@ -97,7 +102,11 @@ export default function TimeIntervals() {
   async function handleSetTimeIntervals(data: any) {
     const { intervals } = data as TimeIntervalsFormOutput
 
-    await api.post('/users/time-intervals', { intervals })
+    await api.post('/users/time-intervals', {
+      intervals,
+    })
+
+    await router.push('/register/update-profile')
   }
 
   return (
@@ -124,9 +133,9 @@ export default function TimeIntervals() {
                     render={({ field }) => {
                       return (
                         <Checkbox
-                          onCheckedChange={(checked) => {
+                          onCheckedChange={(checked) =>
                             field.onChange(checked === true)
-                          }}
+                          }
                           checked={field.value}
                         />
                       )
